@@ -3,8 +3,8 @@ from app.models.users import User
 from app.schemas.users import UserCreate, UserUpdate
 
 
-class CRUDRecipe(CRUDBase[User, UserCreate, UserUpdate]):
+class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     ...
 
 
-recipe = CRUDRecipe(User)
+recipe = CRUDUser(User)
