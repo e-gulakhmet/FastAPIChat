@@ -1,0 +1,31 @@
+version: '3.8'
+
+volumes:
+  postgres_data:
+
+services:
+  postgres-service:
+    container_name: postgres-service
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=main
+      - POSTGRES_PASSWORD=main
+      - POSTGRES_DB=main
+
+  app-service:
+    container_name: app-service
+    build:
+      context: ./app
+    volumes:
+      - ./app/:/usr/src/app/
+    ports:
+      - "4096:80"
+    environment:
+      - DB_URL=postgresql://main:main@db/main_dev
+    command: bash /usr/src/app/scripts/start.sh
+    depends_on:
+      - postgres-service
