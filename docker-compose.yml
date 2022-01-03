@@ -6,7 +6,7 @@ volumes:
 services:
   postgres-service:
     container_name: postgres-service
-    image: postgres:13-alpine
+    image: postgres:13.5
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     expose:
@@ -18,14 +18,13 @@ services:
 
   app-service:
     container_name: app-service
-    build:
-      context: ./app
+    build: .
     volumes:
-      - ./app/:/usr/src/app/
+      - .:/usr/src/app/
+    command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 80
     ports:
-      - "4096:80"
+      - 4096:80
     environment:
-      - DB_URL=postgresql://main:main@db/main_dev
-    command: bash /usr/src/app/scripts/start.sh
+      - DATABASE_URL=postgresql+asyncpg://main:main@db:5432/main
     depends_on:
       - postgres-service

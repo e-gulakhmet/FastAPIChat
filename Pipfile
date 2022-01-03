@@ -7,6 +7,8 @@ name = "pypi"
 fastapi = "*"
 sqlmodel = "*"
 alembic = "*"
+uvicorn = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
