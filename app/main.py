@@ -1,13 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 
-app = FastAPI()
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+from pathlib import Path
 
 
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+BASE_PATH = Path(__file__).resolve().parent
+
+
+app = FastAPI(title="FastApiChat API", openapi_url="/openapi.json")
+
+api_router = APIRouter()
