@@ -17,13 +17,15 @@ def run(args: argparse.Namespace):
     port = args.port
     host = args.host
     os.system('pwd')
-    os.system(f'uvicorn main:app --reload --workers 1 --host {host} --port {port}')
+    os.system(f'sudo uvicorn main:app --reload --workers 1 --host {host} --port {port}')
+
 
 def main():
     parser = _init_parser()
     args = parser.parse_args()
 
     globals()[args.command](args)
+
 
 if __name__ == "__main__":
     main()

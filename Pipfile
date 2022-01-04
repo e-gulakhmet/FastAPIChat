@@ -8,7 +8,7 @@ fastapi = "*"
 sqlmodel = "*"
 alembic = "*"
 uvicorn = "*"
-psycopg2-binary = "*"
+asyncpg = "*"
 
 [dev-packages]
 
