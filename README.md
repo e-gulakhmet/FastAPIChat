@@ -10,7 +10,23 @@
 - SQLModel
 - Alembic
 
-### Запуск
+---
 
-`` docker-compose up -d ``
+## Команды
+
+### Запуск сервера:
+
+` python manage.py run `
+
+### Создание новых миграций:
+
+` python manage.py make_migrations --message <сообщение миграции>`
+
+### Запуск миграций:
+
+` python manage.py migrate `
+
+### Запуск сервисов
+
+` docker-compose up -d `
 
