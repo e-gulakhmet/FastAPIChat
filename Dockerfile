@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.9-slim-buster
+FROM python:3.9-buster
 
 LABEL maintainer="Enes Gulakhmet <wwho.mann.3@gmail.com>"
 

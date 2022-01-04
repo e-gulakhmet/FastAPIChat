@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlmodel import SQLModel, Field
 
 
@@ -11,6 +13,7 @@ class BaseUser(SQLModel):
 class User(BaseUser, table=True):
     id: int = Field(primary_key=True)
     hashed_password: str = Field(nullable=False)
+    year: Optional[int] = None
 
 
 class UserCreate(BaseUser):

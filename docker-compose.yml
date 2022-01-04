@@ -11,6 +11,8 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     expose:
       - 5432
+    ports:
+      - '5432:5432'
     environment:
       - POSTGRES_USER=main
       - POSTGRES_PASSWORD=main
@@ -25,6 +27,6 @@ services:
     ports:
       - 4096:80
     environment:
-      - DATABASE_URL=postgresql+asyncpg://main:main@db:5432/main
+      - DATABASE_URL=postgresql+asyncpg://main:main@postgres-service:5432/main
     depends_on:
       - postgres-service
