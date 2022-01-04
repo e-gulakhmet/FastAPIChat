@@ -1,6 +1,5 @@
 from crud.base import CRUDBase
-from models.users import User
-from schemas.users import UserCreate, UserUpdate
+from models.users import User, UserCreate, UserUpdate
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
