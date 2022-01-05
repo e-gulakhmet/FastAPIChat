@@ -3,9 +3,10 @@ from starlette.middleware.cors import CORSMiddleware
 
 from settings.common import ALLOW_ORIGINS, ALLOW_HEADERS
 
-from models.users import User
+from routers import users, base
 
-app = FastAPI()
+
+app = FastAPI(title="FastAPIChat API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,6 +17,5 @@ app.add_middleware(
 )
 
 
-@app.get("/ping")
-async def pong():
-    return {"ping": "pong!"}
+app.include_router(users.router, prefix='/users', tags=['users'])
+app.include_router(base.router, tags=['base'])
