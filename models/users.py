@@ -19,3 +19,7 @@ class UserCreate(BaseUser):
 
 class UserUpdate(BaseUser):
     pass
+
+
+class UserGet(BaseUser):
+    pass
