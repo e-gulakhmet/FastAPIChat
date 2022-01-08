@@ -1,18 +1,22 @@
 from sqlmodel import Field, SQLModel
 
-from users.models import BaseUserModel
 
-
-class UserCreateSchema(BaseUserModel):
+class UserCreateSchema(SQLModel):
+    email: str = Field(nullable=False)
     password: str = Field(nullable=False)
 
 
-class UserUpdateSchema(BaseUserModel):
-    email = None
+class UserUpdateSchema(SQLModel):
+    first_name: str = Field(nullable=True, default=None)
+    last_name: str = Field(nullable=True, default=None)
+    username: str = Field(nullable=False, min_length=3, max_length=100)
 
 
-class UserGetSchema(BaseUserModel):
-    pass
+class UserGetSchema(SQLModel):
+    first_name: str
+    last_name: str
+    username: str
+    email: str
 
 
 class UserLoginSchema(SQLModel):
