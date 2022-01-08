@@ -18,7 +18,7 @@ router = APIRouter()
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserGet)
 async def create_user(data: UserCreate = Body(...), db_session: AsyncSession = Depends(db.get_session)) -> User:
-    user = await crud.create(db=db_session, obj_in=data)
+    user = await crud.create(db_session=db_session, obj=data)
     return user
 
 

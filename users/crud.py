@@ -12,7 +12,6 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db_obj = User(**obj_data)
         db_obj.hashed_password = await UserService.hash_password(obj.password)
         db_session.add(db_obj)
-        await db_session.refresh(db_obj)
         await db_session.commit()
         return db_obj
 

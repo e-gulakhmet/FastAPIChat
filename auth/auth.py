@@ -1,10 +1,11 @@
-from fastapi import Header
+from fastapi import Header, Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from starlette import status
 
+import db
 from auth.services import JWTAuthService
 from users.models import User
 
@@ -36,7 +37,7 @@ class JWTBearer(HTTPBearer):
         return isTokenValid
 
 
-async def get_request_user(db_session: AsyncSession, token: str = Header(...)) -> User:
+async def get_request_user(db_session: AsyncSession = Depends(db.get_session), token: str = Header(...)) -> User:
     user = await JWTAuthService().get_user_from_token(db_session, token)
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
