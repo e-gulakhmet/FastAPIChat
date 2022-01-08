@@ -1,44 +1,27 @@
-from fastapi import Header, Depends
+from typing import Optional
+
+from fastapi import Depends, HTTPException, Request
+from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
+from fastapi.security import OAuth2, OAuth2AuthorizationCodeBearer, OAuth2PasswordBearer
+from fastapi.security.utils import get_authorization_scheme_param
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from fastapi import Request, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from starlette import status
-
-import db
 from auth.services import JWTAuthService
+from core import db
 from users.models import User
 
-
-class JWTBearer(HTTPBearer):
-    def __init__(self, auto_error: bool = True):
-        super(JWTBearer, self).__init__(auto_error=auto_error)
-
-    async def __call__(self, request: Request):
-        credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
-        if credentials:
-            if not credentials.scheme == "Bearer":
-                raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
-            if not self.verify_jwt(credentials.credentials):
-                raise HTTPException(status_code=403, detail="Invalid token or expired token.")
-            return credentials.credentials
-        else:
-            raise HTTPException(status_code=403, detail="Invalid authorization code.")
-
-    def verify_jwt(self, jwtoken: str) -> bool:
-        isTokenValid: bool = False
-
-        try:
-            payload = JWTAuthService.decode_token(jwtoken)
-        except:
-            payload = None
-        if payload:
-            isTokenValid = True
-        return isTokenValid
+security = OAuth2PasswordBearer(tokenUrl="/users/login")
 
 
-async def get_request_user(db_session: AsyncSession = Depends(db.get_session), token: str = Header(...)) -> User:
+async def get_current_user(db_session: AsyncSession = Depends(db.get_session), token: str = Depends(security)) -> User:
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
     user = await JWTAuthService().get_user_from_token(db_session, token)
     if not user:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+        raise credentials_exception
+
     return user

@@ -1,3 +1,4 @@
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from core.crud import CRUDBase
@@ -16,7 +17,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return db_obj
 
     async def get_by_email(self, db_session: AsyncSession, email: str) -> User:
-        return db_session.query(self.model).filter(self.model.email == email).first()
+        return (await db_session.execute(select(User).where(User.email == email))).scalar()
+
+    async def get_by_username(self, db_session: AsyncSession, username: str) -> User:
+        return (await db_session.execute(select(User).where(User.username == username))).scalar()
 
 
 crud = CRUDUser(User)

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from settings import ALLOW_ORIGINS, ALLOW_HEADERS
+from core.settings import ALLOW_ORIGINS, ALLOW_HEADERS
 
 import users.routers
 import core.routers

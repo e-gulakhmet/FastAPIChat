@@ -9,7 +9,7 @@ DATABASE_URL = os.getenv("DATABASE_URL", 'postgresql+asyncpg://main:main@localho
 
 # JWT
 JWT_SECRET = os.getenv('JWT_SECRET', 'fake_secret')
-JWT_ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES', '30')
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES', 30)
 JWT_ALGORITHM = 'HS256'
 
 
