@@ -1,6 +1,6 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from crud.base import CRUDBase
+from core.crud import CRUDBase
 from models.users import User, UserCreate, UserUpdate
 from services.users import UserService
 

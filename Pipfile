@@ -9,6 +9,9 @@ sqlmodel = "*"
 alembic = "*"
 uvicorn = "*"
 asyncpg = "*"
+passlib = "*"
+jose = "*"
+pyjwt = "*"
 
 [dev-packages]
 
