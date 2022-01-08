@@ -1,7 +1,7 @@
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 ModelType = TypeVar("ModelType", bound=SQLModel)
@@ -18,10 +18,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     async def get(self, db_session: AsyncSession, id: int) -> Optional[ModelType]:
-        return db_session.query(self.model).filter(self.model.id == id).first()
+        return (await db_session.execute(select(self.model).where(self.model.id == id))).scalar()
 
     async def get_multi(self, db_session: AsyncSession, *, skip: int = 0, limit: int = 100) -> List[ModelType]:
-        return db_session.query(self.model).offset(skip).limit(limit).all()
+        return (await db_session.execute(select(self.model).where(self.model.id == id).offset(skip).limit(limit))).scalars().all()
 
     async def create(self, db_session: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)

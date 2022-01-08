@@ -32,8 +32,8 @@ class JWTAuthService:
 
     @staticmethod
     def decode_token(token: str) -> dict:
-        decoded_token = jwt.decode(token, settings.JWT_SECRET, algorithm=[settings.JWT_ALGORITHM])
-        return decoded_token if decoded_token["expires"] >= time.time() else None
+        decoded_token = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+        return decoded_token if decoded_token["exp"] >= time.time() else None
 
     @staticmethod
     async def get_user_from_token_payload(db_session: AsyncSession, payload: dict) -> Optional[User]:
