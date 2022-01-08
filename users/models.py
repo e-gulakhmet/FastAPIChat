@@ -14,7 +14,7 @@ class User(BaseUser, table=True):
 
 
 class UserCreate(BaseUser):
-    password: str
+    password: str = Field(nullable=False)
 
 
 class UserUpdate(BaseUser):
@@ -23,3 +23,9 @@ class UserUpdate(BaseUser):
 
 class UserGet(BaseUser):
     pass
+
+
+class UserLogin(SQLModel):
+    email: str = Field(nullable=False)
+    password: str = Field(nullable=False)
+

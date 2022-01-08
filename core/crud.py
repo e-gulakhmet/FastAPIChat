@@ -12,7 +12,7 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=SQLModel)
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
         """
-        :param model: A SQLAlchemy model class
+        :param model: A SQLModel model class
         """
 
         self.model = model

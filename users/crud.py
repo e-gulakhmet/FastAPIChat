@@ -1,8 +1,8 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from core.crud import CRUDBase
-from models.users import User, UserCreate, UserUpdate
-from services.users import UserService
+from users.models import User, UserCreate, UserUpdate
+from users.services import UserService
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
@@ -15,6 +15,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         await db_session.refresh(db_obj)
         await db_session.commit()
         return db_obj
+
+    async def get_by_email(self, db_session: AsyncSession, email: str) -> User:
+        return db_session.query(self.model).filter(self.model.email == email).first()
 
 
 crud = CRUDUser(User)

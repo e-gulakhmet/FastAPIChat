@@ -1,39 +1,39 @@
 from typing import Any
 
-from fastapi import Request, Depends, APIRouter, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import Depends, APIRouter, HTTPException, Body
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette import status
 
-from crud.users import crud
+from users.crud import crud
 import db
-from models.users import UserCreate, User, UserGet
-from services.auth import JWTAuthService
+from users.models import UserCreate, User, UserGet
+from auth.services import JWTAuthService
+
+from users.models import UserLogin
+from users.services import UserService
+from auth import auth
 
 router = APIRouter()
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserGet)
-async def create_user(request_data: UserCreate, db_session: AsyncSession = Depends(db.get_session)) -> User:
-    """ Create new user """
-
-    print(request_data)
-
-    user = await crud.create(db=db_session, obj_in=request_data)
+async def create_user(data: UserCreate = Body(...), db_session: AsyncSession = Depends(db.get_session)) -> User:
+    user = await crud.create(db=db_session, obj_in=data)
     return user
 
 
-# Добавить response body и request body
 @router.post("/login")
-async def login(db_session: AsyncSession = Depends(db.get_session), form_data: OAuth2PasswordRequestForm = Depends()
-                ) -> Any:
-    """ Get the JWT for a user with data from OAuth2 request form body. """
-
-    user = await JWTAuthService.authenticate(email=form_data.username, password=form_data.password, db=db_session)  # 2
-    if not user:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")  # 3
+async def login(db_session: AsyncSession = Depends(db.get_session), data: UserLogin = Body(...)) -> Any:
+    user = await crud.get_by_email(db_session, data.email)
+    if not UserService.verify_password(data.password, user.hashed_password):
+        raise HTTPException(status_code=400, detail='Incorrect email or password')
 
     return {
-        "access_token": await JWTAuthService().create_access_token(sub=str(user.id)),  # 4
+        "access_token": JWTAuthService().gen_token(user),  # 4
         "token_type": "bearer",
     }
+
+
+@router.get('/me', dependencies=[Depends(auth.JWTBearer())], response_model=UserGet)
+async def retrieve_me(user: User = Depends(auth.get_request_user)) -> User:
+    return user
