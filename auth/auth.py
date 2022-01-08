@@ -1,9 +1,5 @@
-from typing import Optional
-
 from fastapi import Depends, HTTPException, Request
-from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
-from fastapi.security import OAuth2, OAuth2AuthorizationCodeBearer, OAuth2PasswordBearer
-from fastapi.security.utils import get_authorization_scheme_param
+from fastapi.security import OAuth2PasswordBearer
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from auth.services import JWTAuthService

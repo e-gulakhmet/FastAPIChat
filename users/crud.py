@@ -2,12 +2,14 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from core.crud import CRUDBase
-from users.models import User, UserCreate, UserUpdate
+
+from users.models import User
+from users.schemes import UserCreateSchema, UserUpdateSchema
 from users.services import UserService
 
 
-class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
-    async def create(self, db_session: AsyncSession, *, obj: UserCreate) -> User:
+class CRUDUser(CRUDBase[User, UserCreateSchema, UserUpdateSchema]):
+    async def create(self, db_session: AsyncSession, *, obj: UserCreateSchema) -> User:
         obj_data = obj.dict()
         obj_data.pop("password")
         db_obj = User(**obj_data)
@@ -16,10 +18,12 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         await db_session.commit()
         return db_obj
 
-    async def get_by_email(self, db_session: AsyncSession, email: str) -> User:
+    @staticmethod
+    async def get_by_email(db_session: AsyncSession, email: str) -> User:
         return (await db_session.execute(select(User).where(User.email == email))).scalar()
 
-    async def get_by_username(self, db_session: AsyncSession, username: str) -> User:
+    @staticmethod
+    async def get_by_username(db_session: AsyncSession, username: str) -> User:
         return (await db_session.execute(select(User).where(User.username == username))).scalar()
 
 

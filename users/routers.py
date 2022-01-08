@@ -2,49 +2,40 @@ from typing import Any
 
 from fastapi import Depends, APIRouter, HTTPException, Body
 from fastapi.encoders import jsonable_encoder
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette import status
 from starlette.responses import JSONResponse
 
 from auth.auth import get_current_user
-from users.crud import crud
 from core import db
-from users.models import UserCreate, User, UserGet
 from auth.services import JWTAuthService
+from users.schemes import UserCreateSchema, UserGetSchema, UserLoginSchema
 
-from users.models import UserLogin
 from users.services import UserService
+from users.models import User
+from users.crud import crud
+
 
 router = APIRouter()
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserGet)
-async def create_user(data: UserCreate = Body(...), db_session: AsyncSession = Depends(db.get_session)) -> User:
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserGetSchema)
+async def create_user(data: UserCreateSchema = Body(...), db_session: AsyncSession = Depends(db.get_session)) -> User:
     user = await crud.create(db_session=db_session, obj=data)
     return user
 
 
 @router.post("/login")
-async def login(db_session: AsyncSession = Depends(db.get_session), data: UserLogin = Body(...)) -> Any:
-    exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
-            )
-
+async def login(db_session: AsyncSession = Depends(db.get_session), data: UserLoginSchema = Body(...)) -> Any:
     user = await crud.get_by_email(db_session, data.email)
-    if not user:
-        raise exception
 
-    if not (await UserService.verify_password(data.password, user.hashed_password)):
-        raise exception
+    if not user or not await UserService.verify_password(data.password, user.hashed_password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password",
+                            headers={"WWW-Authenticate": "Bearer"})
 
-    access_token = JWTAuthService().gen_user_token(user)
+    token = jsonable_encoder(JWTAuthService().gen_user_token(user))
 
-    token = jsonable_encoder(access_token)
-
-    response = JSONResponse(content={"access_token": access_token})
+    response = JSONResponse(content={"access_token": f"Bearer {token}"})
     response.headers.append("Authorization", f"Bearer {token}")
 
     return response
@@ -79,6 +70,6 @@ async def login(db_session: AsyncSession = Depends(db.get_session), data: UserLo
 #     return response
 
 
-@router.get('/me', dependencies=[Depends(get_current_user)], response_model=UserGet)
+@router.get('/me', dependencies=[Depends(get_current_user)], response_model=UserGetSchema)
 async def retrieve_me(user: User = Depends(get_current_user)) -> User:
     return user
