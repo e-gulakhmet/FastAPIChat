@@ -8,7 +8,7 @@ class UserCreateSchema(BaseUserModel):
 
 
 class UserUpdateSchema(BaseUserModel):
-    pass
+    email = None
 
 
 class UserGetSchema(BaseUserModel):
