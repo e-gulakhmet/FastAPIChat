@@ -16,7 +16,7 @@ class Commands:
         os.system(f'alembic revision --autogenerate -m "{message}"')
 
     @staticmethod
-    def migrate():
+    def migrate(args: argparse.Namespace):
         os.system('alembic upgrade head')
 
 
