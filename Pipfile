@@ -12,6 +12,8 @@ asyncpg = "*"
 passlib = "*"
 jose = "*"
 pyjwt = "*"
+pytest = "*"
+requests = "*"
 
 [dev-packages]
 
