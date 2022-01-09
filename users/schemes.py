@@ -13,6 +13,7 @@ class UserUpdateSchema(SQLModel):
 
 
 class UserGetSchema(SQLModel):
+    id: int
     first_name: str
     last_name: str
     username: str
