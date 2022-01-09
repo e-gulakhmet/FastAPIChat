@@ -25,7 +25,7 @@ async def create_user(data: UserCreateSchema = Body(...), db_session: AsyncSessi
     return user
 
 
-@router.post("/login")
+@router.post("/login", status_code=status.HTTP_200_OK)
 async def login(db_session: AsyncSession = Depends(db.get_session), data: UserLoginSchema = Body(...)) -> Any:
     user = await crud.get_by_email(db_session, data.email)
 
@@ -70,6 +70,11 @@ async def login(db_session: AsyncSession = Depends(db.get_session), data: UserLo
 #     return response
 
 
-@router.get('/me', dependencies=[Depends(get_current_user)], response_model=UserGetSchema)
+@router.get(
+    '/me',
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(get_current_user)],
+    response_model=UserGetSchema
+)
 async def retrieve_me(user: User = Depends(get_current_user)) -> User:
     return user
