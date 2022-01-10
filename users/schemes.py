@@ -1,25 +1,27 @@
+from typing import Optional
+
 from sqlmodel import Field, SQLModel
 
 
 class UserCreateSchema(SQLModel):
-    email: str = Field(nullable=False)
-    password: str = Field(nullable=False)
+    email: str
+    password: str
 
 
 class UserUpdateSchema(SQLModel):
-    first_name: str = Field(nullable=True, default=None)
-    last_name: str = Field(nullable=True, default=None)
+    first_name: Optional[str]
+    last_name: Optional[str]
     username: str = Field(nullable=False, min_length=3, max_length=100)
 
 
 class UserGetSchema(SQLModel):
     id: int
-    first_name: str
-    last_name: str
-    username: str
+    first_name: Optional[str]
+    last_name: Optional[str]
+    username: Optional[str]
     email: str
 
 
 class UserLoginSchema(SQLModel):
-    email: str = Field(nullable=False)
-    password: str = Field(nullable=False)
+    email: str
+    password: str

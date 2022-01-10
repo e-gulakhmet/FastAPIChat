@@ -1,20 +1,19 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from core.settings import ALLOW_ORIGINS, ALLOW_HEADERS
+from core.config import get_settings
 
 import users.routers
 import core.routers
-
 
 app = FastAPI(title="FastAPIChat API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOW_ORIGINS,
+    allow_origins=get_settings().allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=ALLOW_HEADERS,
+    allow_headers=get_settings().allow_headers,
 )
 
 
