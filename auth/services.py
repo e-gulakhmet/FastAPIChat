@@ -5,7 +5,6 @@ from typing import Optional
 import jwt
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from core import settings
 from users.models import User
 from users.crud import crud
 
