@@ -38,5 +38,5 @@
 
 ## Полезные ссылки
 
-- https://github.com/prostomarkeloff/fastapi-tortoise - Основа была взята от сюда
+- https://github.com/prostomarkeloff/fastapi-tortoise - Основа была взята отсюда
 
