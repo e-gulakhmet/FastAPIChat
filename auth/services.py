@@ -3,14 +3,45 @@ from datetime import timedelta, datetime
 from typing import Optional
 
 import jwt
-from sqlmodel.ext.asyncio.session import AsyncSession
+from passlib.context import CryptContext
 
-from users.models import User
-from users.crud import crud
+from auth.schemes import CredentialsSchema
+from core.config import settings
+
+
+class AuthService:
+    def __init__(self, user_model):
+        self.user_model = user_model
+
+    async def auth(self, credentials: CredentialsSchema):
+        """
+        :return: user by specified credentials
+        """
+        if credentials.email:
+            user = await self.user_model.get_by_email(credentials.email)
+        elif credentials.username:
+            user = await self.user_model.get_by_username(credentials.username)
+        else:
+            raise ValueError('email or username must be specified')
+
+        if user is None:
+            return None
+
+        if not self._verify_password(credentials.password, user.hashed_password):
+            return None
+
+        return user
+
+    @staticmethod
+    def _verify_password(plain_password, hashed_password) -> bool:
+        return CryptContext(schemes=["bcrypt"], deprecated="auto").verify(plain_password, hashed_password)
 
 
 class JWTAuthService:
-    def gen_user_token(self, user: User) -> str:
+    def __init__(self, user_model):
+        self.user_model = user_model
+
+    def gen_user_token(self, user) -> str:
         user_id = user.id
         payload = {'user_id': user_id}
         return self.gen_access_token(payload, timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES))
@@ -34,12 +65,11 @@ class JWTAuthService:
         decoded_token = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
         return decoded_token if decoded_token["exp"] >= time.time() else None
 
-    @staticmethod
-    async def get_user_from_token_payload(db_session: AsyncSession, payload: dict) -> Optional[User]:
+    async def get_user_from_token_payload(self, payload: dict):
         user_id = payload['user_id']
-        return await crud.get(db_session, user_id)
+        return await self.user_model.get_by_id(user_id)
 
-    async def get_user_from_token(self, db_session: AsyncSession, token: str) -> Optional[User]:
+    async def get_user_from_token(self, token: str):
         payload = self.decode_token(token)
-        user = await self.get_user_from_token_payload(db_session, payload)
+        user = await self.get_user_from_token_payload(payload)
         return user
