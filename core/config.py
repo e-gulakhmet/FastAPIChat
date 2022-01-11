@@ -5,8 +5,8 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     app_name: str = "FastAPIChat"
-    allow_origins: list[str] = ['*']
-    allow_headers: list[str] = ['*']
+    cors_allow_origins: list[str] = ['*']
+    cors_allow_headers: list[str] = ['*']
     # Database
     database_url: str = 'postgresql+asyncpg://main:main@localhost:5432/main'
     test_database_url: str = 'postgresql+asyncpg://test:test@localhost:5435/test'
