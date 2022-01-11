@@ -24,10 +24,7 @@ class AuthService:
         else:
             raise ValueError('email or username must be specified')
 
-        if user is None:
-            return None
-
-        if not self._verify_password(credentials.password, user.hashed_password):
+        if user is None or not self._verify_password(credentials.password, user.hashed_password):
             return None
 
         return user
