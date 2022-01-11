@@ -17,6 +17,7 @@ requests = "*"
 httpx = "*"
 trio = "*"
 pytest-asyncio = "*"
+tortoise-orm = "*"
 
 [dev-packages]
 
