@@ -19,7 +19,7 @@ class UserDBScheme(BaseUserScheme):
         orm_mode = True
 
 
-class BaseUserOutScheme(BaseUserScheme):
+class UserOutScheme(BaseUserScheme):
     id: int
 
     class Config:

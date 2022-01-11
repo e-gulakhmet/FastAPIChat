@@ -3,9 +3,9 @@ from typing import Optional
 from tortoise import fields
 from tortoise.exceptions import DoesNotExist
 
-from core.models import BaseDBModel
-from users.schemes import UserCreateScheme
-from users.services import UserService
+from app.core.models import BaseDBModel
+from app.users.schemes import UserCreateScheme
+from app.users.services import UserService
 
 
 class User(BaseDBModel):

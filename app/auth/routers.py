@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import JSONResponse
 
-from auth.schemes import JWTToken, CredentialsSchema
-from auth.services import JWTAuthService, AuthService
-from users.models import User
+from app.auth.schemes import JWTToken, CredentialsSchema
+from app.auth.services import JWTAuthService, AuthService
+from app.users.models import User
 
 router = APIRouter()
 

@@ -1,9 +1,14 @@
-from functools import lru_cache
-
 from pydantic import BaseSettings
 
 
-class Settings(BaseSettings):
+APPS = [
+    'auth',
+    'users',
+    'core',
+]
+
+
+class AppSettings(BaseSettings):
     app_name: str = "FastAPIChat"
     cors_allow_origins: list[str] = ['*']
     cors_allow_headers: list[str] = ['*']
@@ -15,10 +20,6 @@ class Settings(BaseSettings):
     jwt_access_token_expire_minutes: int = 30
     jwt_algorithm = 'HS256'
 
-
-@lru_cache()
-def get_settings():
-    return Settings()
+    apps = [APPS]
 
 
-settings = Settings()

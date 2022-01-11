@@ -8,13 +8,13 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette import status
 
-from core import db
-from core.config import get_settings
-from main import app
+from app.core import db
+from app.core.config import get_settings
+from app.main import app
 
-from users.crud import crud
-from users.models import User
-from users.schemes import UserCreateSchema
+from app.users import crud
+from app.users.models import User
+from app.users.schemes import UserCreateSchema
 
 
 CREATE_USER_ROUTE = '/users/'
