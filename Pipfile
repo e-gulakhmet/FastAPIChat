@@ -18,6 +18,7 @@ httpx = "*"
 trio = "*"
 pytest-asyncio = "*"
 tortoise-orm = "*"
+pydantic = {extras = ["email"], version = "*"}
 
 [dev-packages]
 

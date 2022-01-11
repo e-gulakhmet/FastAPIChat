@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 
-router = APIRouter(tags=['base'])
+router = APIRouter(prefix='/core', tags=['core'])
 
 
 @router.get("/ping")

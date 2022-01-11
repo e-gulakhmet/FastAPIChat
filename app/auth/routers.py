@@ -6,10 +6,10 @@ from app.auth.schemes import JWTToken, CredentialsSchema
 from app.auth.services import JWTAuthService, AuthService
 from app.users.models import User
 
-router = APIRouter()
+router = APIRouter(prefix='/auth', tags=['auth'])
 
 
-@router.post("/access-token", response_model=JWTToken, tags=["login"])
+@router.post("/access-token", response_model=JWTToken)
 async def login_access_token(credentials: CredentialsSchema):
     user = await AuthService(User).auth(credentials)
     if not user:

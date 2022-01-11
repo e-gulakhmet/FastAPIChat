@@ -19,20 +19,6 @@ services:
       - POSTGRES_PASSWORD=main
       - POSTGRES_DB=main
 
-  test-postgres-service:
-    container_name: test-postgres-service
-    image: postgres:13.5
-    volumes:
-      - test_postgres_data:/var/lib/postgresql/data/
-    expose:
-      - 5432
-    ports:
-      - '5435:5432'
-    environment:
-      - POSTGRES_USER=test
-      - POSTGRES_PASSWORD=test
-      - POSTGRES_DB=test
-
   app-service:
     container_name: app-service
     build: .

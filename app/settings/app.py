@@ -2,9 +2,7 @@ from pydantic import BaseSettings
 
 
 APPS = [
-    'auth',
     'users',
-    'core',
 ]
 
 

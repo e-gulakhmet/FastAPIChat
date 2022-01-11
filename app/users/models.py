@@ -9,7 +9,7 @@ from app.users.services import UserService
 
 
 class User(BaseDBModel):
-    username = fields.CharField(max_length=20, unique=True)
+    username = fields.CharField(max_length=20, unique=True, null=True)
     email = fields.CharField(max_length=255, unique=True)
     first_name = fields.CharField(max_length=50, null=True)
     last_name = fields.CharField(max_length=50, null=True)
@@ -42,7 +42,7 @@ class User(BaseDBModel):
     @classmethod
     async def create(cls, user_obj: UserCreateScheme) -> "User":
         user_dict = user_obj.dict()
-        password_hash = UserService.hash_password(user_obj.password)
+        password_hash = await UserService.hash_password(user_obj.password)
         user = cls(**user_dict, password_hash=password_hash)
         await user.save()
         return user

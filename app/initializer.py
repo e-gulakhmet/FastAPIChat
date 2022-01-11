@@ -28,9 +28,9 @@ def init_db(app: FastAPI):
 
 def init_routers(app: FastAPI):
     """ Initialize routers """
-    app.include_router(auth_router, prefix='/auth', tags=['auth'])
-    app.include_router(core_router, prefix='/core', tags=['core'])
-    app.include_router(users_router, prefix='/users', tags=['users'])
+    app.include_router(auth_router)
+    app.include_router(core_router)
+    app.include_router(users_router)
 
 
 def init_middlewares(app: FastAPI):
