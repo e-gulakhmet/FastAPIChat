@@ -2,70 +2,38 @@ import json
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.orm import sessionmaker
-from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette import status
 
-from app.core import db
-from app.core.config import get_settings
 from app.main import app
-
-from app.users import crud
 from app.users.models import User
-from app.users.schemes import UserCreateSchema
-
+from app.users.schemes import UserCreateScheme
 
 CREATE_USER_ROUTE = '/users/'
 RETRIEVE_USER_ROUTE = '/users/me'
 LOGIN_ROUTE = '/users/login'
 
 
-engine = create_async_engine(get_settings().test_database_url, echo=False, future=True)
-
-
-async def get_test_session():
-    async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-    async with async_session() as session:
-        yield session
-
-app.dependency_overrides[db.get_session] = get_test_session
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture
 async def auth_user() -> User:
-    return await crud.create(UserCreateSchema(email='client@gmail.com', password='Client12345'))
+    return await User.create(UserCreateScheme(email='client@gmail.com', password='Client12345'))
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 async def not_auth_client():
     async with AsyncClient(app=app, base_url="http://localhost") as client:
         yield client
 
 
-@pytest.fixture
-async def db_session():
-    async for session in db.get_session():
-        yield session
-
-
-# @pytest.fixture
-# async def db_session():
-#     return Depends(db.get_session)
-
-
-@pytest.mark.asyncio
-async def test_create_user(not_auth_client: AsyncClient, db_session):
+async def test_create_user(not_auth_client: AsyncClient):
     request_payload = {"email": "some_email@gmail.com", "password": "some_password"}
-    # users = await crud.get_multi(db_session)
-    users = (await db_session.execute(select(User))).all()
-    users_count_before = len(users)
+    users_count_before = await User.all().count()
 
     response = await not_auth_client.post(CREATE_USER_ROUTE, json=request_payload)
     assert response.status_code == status.HTTP_201_CREATED, response.json()
-    users = (await db_session.execute(select(User))).all()
-    assert len(users) == users_count_before + 1
+    assert len(await User.all()) == users_count_before + 1
 
 
 # async def test_fail_create_already_exist_user(client, db_session: AsyncSession = Depends(db.get_session)):

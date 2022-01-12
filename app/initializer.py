@@ -26,6 +26,17 @@ def init_db(app: FastAPI):
     )
 
 
+TORTOISE_ORM = {
+        'connections': {'default': tortoise_settings.db_url},
+        'apps': {
+            'models': {
+                'models': tortoise_settings.models,
+                'default_connection': 'default',
+            }
+        }
+    }
+
+
 def init_routers(app: FastAPI):
     """ Initialize routers """
     app.include_router(auth_router)

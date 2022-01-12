@@ -5,8 +5,6 @@ name = "pypi"
 
 [packages]
 fastapi = "*"
-sqlmodel = "*"
-alembic = "*"
 uvicorn = "*"
 asyncpg = "*"
 passlib = "*"
@@ -19,6 +17,7 @@ trio = "*"
 pytest-asyncio = "*"
 tortoise-orm = "*"
 pydantic = {extras = ["email"], version = "*"}
+aerich = "*"
 
 [dev-packages]
 
