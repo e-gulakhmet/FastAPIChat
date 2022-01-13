@@ -5,6 +5,7 @@ from httpx import AsyncClient
 from starlette import status
 
 from app.users.models import User
+from app.users.schemes import UserCreateScheme
 
 CREATE_USER_ROUTE = '/users/'
 RETRIEVE_USER_ROUTE = '/users/me'
@@ -23,30 +24,30 @@ async def test_create_user(client: AsyncClient):
     assert len(await User.all()) == users_count_before + 1
 
 
-# async def test_fail_create_already_exist_user(client, db_session: AsyncSession = Depends(db.get_session)):
-#     user_1 = await crud.create(db_session, UserCreateSchema(email='user1@gmail.com', password='some_password'))
-#     response = client.post(CREATE_USER_ROUTE, data=json.dumps(dict(email=user_1.email, password=user_1.password)))
-#     assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-
-def test_fail_create_user_with_wrong_email_format(client):
-    response = client.post(CREATE_USER_ROUTE, data=json.dumps(dict(email='some_data', password='some_password')))
+async def test_fail_create_already_exist_user(client):
+    user_1 = await User.create(UserCreateScheme(email='user1@gmail.com', password='some_password'))
+    response = await client.post(CREATE_USER_ROUTE, json=dict(email=user_1.email, password='some_password'))
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-def test_retrieve_me(client):
-    response = client.get(RETRIEVE_USER_ROUTE)
+async def test_fail_create_user_with_wrong_email_format(client):
+    response = await client.post(CREATE_USER_ROUTE, json=dict(email='some_data', password='some_password'))
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+async def test_retrieve_me(authorized_client, auth_user):
+    response = await authorized_client.get(RETRIEVE_USER_ROUTE)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     response_data = response.json()
-    assert response_data['id'] == client.id
+    assert response_data['id'] == auth_user
     assert 'first_name' in response_data
     assert 'last_name' in response_data
     assert 'username' in response_data
     assert 'email' in response_data
 
 
-def test_login(client):
-    response = client.post(LOGIN_ROUTE, data=json.dumps(dict(email=client.email, password=client.password)))
+def test_login(authorized_client):
+    response = authorized_client.post(LOGIN_ROUTE, data=json.dumps(dict(email=client.email, password=client.password)))
     assert response.status_code == status.HTTP_200_OK
     assert 'access_token' in response.json()
 
