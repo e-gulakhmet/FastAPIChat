@@ -63,7 +63,7 @@ class JWTAuthService:
 
     async def get_user_from_token_payload(self, payload: dict):
         user_id = payload['user_id']
-        return await self.user_model.get_by_id(user_id)
+        return await self.user_model.get(id=user_id)
 
     async def get_user_from_token(self, token: str):
         payload = self.decode_token(token)

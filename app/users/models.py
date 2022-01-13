@@ -13,7 +13,7 @@ class User(BaseDBModel):
     email = fields.CharField(max_length=255, unique=True)
     first_name = fields.CharField(max_length=50, null=True)
     last_name = fields.CharField(max_length=50, null=True)
-    password_hash = fields.CharField(max_length=128, null=True)
+    hashed_password = fields.CharField(max_length=128)
     is_superuser = fields.BooleanField(default=False)
 
     def full_name(self) -> str:
@@ -42,8 +42,8 @@ class User(BaseDBModel):
     @classmethod
     async def create(cls, user_obj: UserCreateScheme) -> "User":
         user_dict = user_obj.dict()
-        password_hash = await UserService.hash_password(user_obj.password)
-        user = cls(**user_dict, password_hash=password_hash)
+        hashed_password = await UserService.hash_password(user_obj.password)
+        user = cls(**user_dict, hashed_password=hashed_password)
         await user.save()
         return user
 

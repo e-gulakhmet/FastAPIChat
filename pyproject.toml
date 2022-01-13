@@ -2,3 +2,12 @@
 tortoise_orm = "app.initializer.TORTOISE_ORM"
 location = "./app/migrations"
 src_folder = "./."
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+filterwarnings = "error"
+addopts = '''
+  --strict-markers
+  --tb=short
+'''
+asyncio_mode = 'auto'

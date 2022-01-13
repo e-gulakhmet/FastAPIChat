@@ -7,17 +7,19 @@ from httpx import AsyncClient
 
 from app.auth.services import JWTAuthService
 from app.users.models import User
-from app.users.schemes import UserCreateScheme
-
-
-environ['APP_ENV'] = "test"
+from tests.services import TestDataService
 
 
 @pytest.fixture
 def app() -> FastAPI:
     from app.main import init_app
-
+    environ.setdefault('APP_ENV', "test")
     return init_app()
+
+
+@pytest.fixture
+def test_data_service() -> TestDataService:
+    return TestDataService()
 
 
 @pytest.fixture(autouse=True)
@@ -32,9 +34,9 @@ async def client(initialized_app: FastAPI):
         yield client
 
 
-@pytest.fixture()
-async def auth_user() -> User:
-    return await User.create(UserCreateScheme(email='client@gmail.com', password='Client12345'))
+@pytest.fixture
+async def auth_user(test_data_service) -> User:
+    return await test_data_service.create_user()
 
 
 @pytest.fixture

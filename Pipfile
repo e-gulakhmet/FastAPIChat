@@ -16,9 +16,10 @@ httpx = "*"
 trio = "*"
 pytest-asyncio = "*"
 tortoise-orm = "*"
-pydantic = {extras = ["email"], version = "*"}
+pydantic = {extras = ["dotenv"], version = "*"}
 aerich = "*"
 asgi-lifespan = "*"
+pytest-env = "*"
 
 [dev-packages]
 
