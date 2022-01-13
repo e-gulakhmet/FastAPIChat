@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 
-from app.settings import app_settings
 from app.initializer import init
+from app.settings.config import get_settings
 
-app = FastAPI(title=app_settings.app_name)
 
-init(app)
+def init_app() -> FastAPI:
+    settings = get_settings()
+    application = FastAPI(**settings.fastapi_kwargs)
+
+    init(application)
+
+    return application
+
+
+app = init_app()

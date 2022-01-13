@@ -1,9 +1,9 @@
 from pydantic import Field
 
-from app.settings import AppSettings
+from app.settings.app import BaseAppSettings
 
 
-class DevAppSettings(AppSettings):
+class DevAppSettings(BaseAppSettings):
     debug: bool = True
 
     postgres_user: str = Field("main", env="POSTGRES_USER")
@@ -12,5 +12,5 @@ class DevAppSettings(AppSettings):
     postgres_port: str = Field("5432", env="POSTGRES_PORT")
     postgres_host: str = Field("localhost", env="POSTGRES_HOST")
 
-    class Config(AppSettings.Config):
+    class Config(BaseAppSettings.Config):
         env_file = ".env"

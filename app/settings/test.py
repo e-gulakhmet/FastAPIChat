@@ -1,12 +1,10 @@
-from app.settings import AppSettings
+from app.settings.app import BaseAppSettings
 
 
-class TestAppSettings(AppSettings):
+class TestAppSettings(BaseAppSettings):
     debug: bool = True
 
     database_url = 'sqlite://:memory:'
 
-    logging_level: int = logging.DEBUG
-
-    class Config(AppSettings.Config):
+    class Config(BaseAppSettings.Config):
         env_file = ".env"

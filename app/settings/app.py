@@ -1,11 +1,18 @@
+from enum import Enum
 from typing import Any, Dict
 
-from pydantic.tools import lru_cache
-
-from app.settings.base import BaseAppSettings
+from pydantic import BaseSettings
 
 
-class AppSettings(BaseAppSettings):
+class AppEnvTypes(Enum):
+    prod: str = "prod"
+    dev: str = "dev"
+    test: str = "test"
+
+
+class BaseAppSettings(BaseSettings):
+    app_env: AppEnvTypes = AppEnvTypes.prod
+
     debug: bool = False
     docs_url: str = "/docs"
     openapi_prefix: str = ""
@@ -20,8 +27,8 @@ class AppSettings(BaseAppSettings):
     max_connection_count: int = 10
     min_connection_count: int = 10
 
-    jwt_secret: str
-    jwt_access_token_expire_minutes: int
+    jwt_secret: str = 'fake_secret'
+    jwt_access_token_expire_minutes: int = 6 * 24 * 30
     jwt_algorithm: str = 'HS256'
 
     postgres_user: str = 'main'
@@ -29,10 +36,15 @@ class AppSettings(BaseAppSettings):
     postgres_db: str = 'main'
     postgres_port: str = '5432'
     postgres_host: str = '0.0.0.0'
-    database_url = f"postgresql+asyncpg://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}"
+    database_url = f"postgres://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}"
+    models = [
+        'aerich.models',
+        'app.users.models'
+    ]
 
     class Config:
         validate_assignment = True
+        env_file = ".env"
 
     @property
     def fastapi_kwargs(self) -> Dict[str, Any]:

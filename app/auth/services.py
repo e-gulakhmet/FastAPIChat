@@ -6,7 +6,7 @@ import jwt
 from passlib.context import CryptContext
 
 from app.auth.schemes import CredentialsSchema
-from app.settings import app_settings
+from app.settings.config import get_settings
 
 
 class AuthService:
@@ -37,14 +37,14 @@ class AuthService:
 class JWTAuthService:
     def __init__(self, user_model):
         self.user_model = user_model
+        self.settings = get_settings()
 
     def gen_user_token(self, user) -> str:
         user_id = user.id
         payload = {'user_id': user_id}
-        return self.gen_access_token(payload, timedelta(minutes=app_settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES))
+        return self.gen_access_token(payload, timedelta(minutes=self.settings.jwt_access_token_expire_minutes))
 
-    @staticmethod
-    def gen_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+    def gen_access_token(self, data: dict, expires_delta: Optional[timedelta] = None) -> str:
         to_encode = data.copy()
 
         if expires_delta:
@@ -53,13 +53,12 @@ class JWTAuthService:
             expire = datetime.utcnow() + timedelta(minutes=15)
 
         to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, app_settings.JWT_SECRET, algorithm=app_settings.JWT_ALGORITHM)
+        encoded_jwt = jwt.encode(to_encode, self.settings.jwt_secret, algorithm=self.settings.jwt_algorithm)
 
         return encoded_jwt
 
-    @staticmethod
-    def decode_token(token: str) -> dict:
-        decoded_token = jwt.decode(token, app_settings.JWT_SECRET, algorithms=[app_settings.JWT_ALGORITHM])
+    def decode_token(self, token: str) -> dict:
+        decoded_token = jwt.decode(token, self.settings.jwt_secret, algorithms=[self.settings.jwt_algorithm])
         return decoded_token if decoded_token["exp"] >= time.time() else None
 
     async def get_user_from_token_payload(self, payload: dict):
