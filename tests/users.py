@@ -4,9 +4,7 @@ import pytest
 from httpx import AsyncClient
 from starlette import status
 
-from app.main import app
 from app.users.models import User
-from app.users.schemes import UserCreateScheme
 
 CREATE_USER_ROUTE = '/users/'
 RETRIEVE_USER_ROUTE = '/users/me'
@@ -16,22 +14,11 @@ LOGIN_ROUTE = '/users/login'
 pytestmark = pytest.mark.asyncio
 
 
-@pytest.fixture
-async def auth_user() -> User:
-    return await User.create(UserCreateScheme(email='client@gmail.com', password='Client12345'))
-
-
-@pytest.fixture(scope='function')
-async def not_auth_client():
-    async with AsyncClient(app=app, base_url="http://localhost") as client:
-        yield client
-
-
-async def test_create_user(not_auth_client: AsyncClient):
+async def test_create_user(client: AsyncClient):
     request_payload = {"email": "some_email@gmail.com", "password": "some_password"}
     users_count_before = await User.all().count()
 
-    response = await not_auth_client.post(CREATE_USER_ROUTE, json=request_payload)
+    response = await client.post(CREATE_USER_ROUTE, json=request_payload)
     assert response.status_code == status.HTTP_201_CREATED, response.json()
     assert len(await User.all()) == users_count_before + 1
 
